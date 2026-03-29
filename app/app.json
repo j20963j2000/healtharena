@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "HealthArena",
+    "slug": "healtharena",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f172a"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yukhnology.healtharena",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "HealthArena 需要讀取您的健康數據（步數、體重、體脂、飲水量）來參與競技場比拚",
+        "NSHealthUpdateUsageDescription": "HealthArena 需要存取您的健康數據",
+        "NSCameraUsageDescription": "HealthArena 需要相機來拍攝打卡照片",
+        "NSPhotoLibraryUsageDescription": "HealthArena 需要相片庫來上傳打卡照片和頭貼",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.background-delivery": true
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f172a"
+      },
+      "package": "com.yukhnology.healtharena"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "react-native-health",
+        {
+          "isClinicalDataEnabled": false
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2175726b-b71b-4edc-9649-1c05efe2651f"
+      }
+    }
+  }
+}
