@@ -2,9 +2,33 @@ from fastapi import APIRouter, HTTPException, Header
 from app.models.schemas import ArenaCreate, ArenaResponse, ArenaStatus
 from app.database import supabase
 from typing import List
+from datetime import date
 import uuid
 import random
 import string
+
+
+def compute_arena_status(arena: dict) -> str:
+    today = date.today().isoformat()
+    if arena["status"] == ArenaStatus.FINISHED.value:
+        return ArenaStatus.FINISHED.value
+    if today < arena["start_date"]:
+        return ArenaStatus.PENDING.value
+    if today > arena["end_date"]:
+        return ArenaStatus.FINISHED.value
+    return ArenaStatus.ACTIVE.value
+
+
+def sync_statuses(arenas: list) -> list:
+    """Update status in DB for any arena whose status has drifted, return updated list."""
+    updated = []
+    for a in arenas:
+        correct = compute_arena_status(a)
+        if a["status"] != correct:
+            supabase.table("arenas").update({"status": correct}).eq("id", a["id"]).execute()
+            a = {**a, "status": correct}
+        updated.append(a)
+    return updated
 
 router = APIRouter(prefix="/arenas", tags=["arenas"])
 
@@ -63,7 +87,7 @@ async def list_my_arenas(user_id: str = Header(...)):
     if not arena_ids:
         return []
     result = supabase.table("arenas").select("*").in_("id", arena_ids).execute()
-    return result.data
+    return sync_statuses(result.data)
 
 
 @router.post("/join/{invite_code}", response_model=ArenaResponse)
