@@ -20,7 +20,8 @@
         "NSHealthUpdateUsageDescription": "HealthArena 需要存取您的健康數據",
         "NSCameraUsageDescription": "HealthArena 需要相機來拍攝打卡照片",
         "NSPhotoLibraryUsageDescription": "HealthArena 需要相片庫來上傳打卡照片和頭貼",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSFaceIDUsageDescription": "HealthArena 使用 Face ID 讓您快速安全地登入"
       },
       "entitlements": {
         "com.apple.developer.healthkit": true,
@@ -43,7 +44,9 @@
         {
           "isClinicalDataEnabled": false
         }
-      ]
+      ],
+      "expo-local-authentication",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {
