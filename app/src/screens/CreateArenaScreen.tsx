@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
-  ScrollView, Alert, Platform, Modal,
+  ScrollView, Alert, Platform, Modal, FlatList,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { createArena } from "../lib/api";
@@ -33,7 +33,11 @@ export default function CreateArenaScreen({ navigation }: any) {
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
   const [selectedScoring, setSelectedScoring] = useState<string[]>(["daily_goal", "final_ranking", "improvement"]);
   const [dailyGoals, setDailyGoals] = useState<Record<string, string>>({});
+  const [reportHourTW, setReportHourTW] = useState(22); // Taiwan time (UTC+8)
   const [loading, setLoading] = useState(false);
+
+  // Taiwan time display options (every hour)
+  const REPORT_HOURS_TW = Array.from({ length: 24 }, (_, i) => i);
 
   const toggleMetric = (key: string) => {
     setSelectedMetrics(prev =>
@@ -64,6 +68,8 @@ export default function CreateArenaScreen({ navigation }: any) {
         if (dailyGoals[m]) goals[m] = Number(dailyGoals[m]);
       });
 
+      const reportHourUTC = (reportHourTW - 8 + 24) % 24; // convert Taiwan UTC+8 → UTC
+
       await createArena({
         name,
         description,
@@ -72,6 +78,7 @@ export default function CreateArenaScreen({ navigation }: any) {
         start_date: startDate.toISOString().split("T")[0],
         end_date: endDate.toISOString().split("T")[0],
         max_members: maxMembers ? Number(maxMembers) : null,
+        report_hour: reportHourUTC,
         rules: {
           metrics: selectedMetrics,
           scoring_methods: selectedScoring,
@@ -204,6 +211,21 @@ export default function CreateArenaScreen({ navigation }: any) {
         </TouchableOpacity>
       ))}
 
+      <Text style={styles.sectionTitle}>AI 戰報時間（台灣時間）</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hourScroll}>
+        {REPORT_HOURS_TW.map(h => (
+          <TouchableOpacity
+            key={h}
+            style={[styles.hourChip, reportHourTW === h && styles.hourChipSelected]}
+            onPress={() => setReportHourTW(h)}
+          >
+            <Text style={[styles.hourChipText, reportHourTW === h && styles.hourChipTextSelected]}>
+              {String(h).padStart(2, "0")}:00
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
         onPress={handleCreate}
@@ -247,6 +269,15 @@ const styles = StyleSheet.create({
   },
   dateLabel: { color: "#94a3b8", fontSize: 15 },
   dateValue: { color: "#6366f1", fontWeight: "bold", fontSize: 15 },
+  hourScroll: { marginBottom: 12 },
+  hourChip: {
+    backgroundColor: "#1e293b", borderRadius: 10,
+    paddingHorizontal: 14, paddingVertical: 10,
+    marginRight: 8, borderWidth: 1, borderColor: "#334155",
+  },
+  hourChipSelected: { backgroundColor: "#312e81", borderColor: "#6366f1" },
+  hourChipText: { color: "#94a3b8", fontSize: 14 },
+  hourChipTextSelected: { color: "#f8fafc", fontWeight: "bold" },
   button: {
     backgroundColor: "#6366f1", borderRadius: 14,
     padding: 16, alignItems: "center", marginTop: 24,

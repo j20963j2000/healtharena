@@ -59,6 +59,7 @@ async def _create_arena(arena: ArenaCreate, user_id: str):
             "start_date": str(arena.start_date),
             "end_date": str(arena.end_date),
             "max_members": arena.max_members,
+            "report_hour": arena.report_hour,
             "status": ArenaStatus.PENDING.value,
             "invite_code": generate_invite_code(),
         })

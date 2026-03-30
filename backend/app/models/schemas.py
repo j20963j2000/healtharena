@@ -57,6 +57,7 @@ class ArenaCreate(BaseModel):
     start_date: date
     end_date: date
     max_members: Optional[int] = None  # None = unlimited
+    report_hour: int = 14  # UTC hour to generate daily report (default 14 = 22:00 Taiwan UTC+8)
 
 
 class ArenaResponse(ArenaCreate):

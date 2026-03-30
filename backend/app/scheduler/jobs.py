@@ -18,19 +18,23 @@ async def sync_arena_statuses():
 
 
 async def run_daily_reports():
-    """每日 22:00 為所有進行中的競技場生成戰報"""
+    """每整點檢查哪些競技場的 report_hour 等於目前 UTC 小時，並生成戰報"""
+    from datetime import datetime, timezone
+    current_utc_hour = datetime.now(timezone.utc).hour
     today = date.today()
+
     active_arenas = (
         supabase.table("arenas")
-        .select("id")
+        .select("id, report_hour")
         .eq("status", "active")
+        .eq("report_hour", current_utc_hour)
         .execute()
     )
 
     for arena in active_arenas.data:
         try:
             await generate_daily_report(arena["id"], today)
-            logger.info(f"Generated report for arena {arena['id']}")
+            logger.info(f"Generated report for arena {arena['id']} (report_hour={current_utc_hour} UTC)")
         except Exception as e:
             logger.error(f"Failed to generate report for arena {arena['id']}: {e}")
 
@@ -44,7 +48,7 @@ def start_scheduler():
     )
     scheduler.add_job(
         run_daily_reports,
-        CronTrigger(hour=22, minute=0),
+        CronTrigger(minute=0),   # every hour on the hour
         id="daily_reports",
         replace_existing=True,
     )
