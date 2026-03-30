@@ -33,6 +33,14 @@ export async function getMyArenas() {
   return res.json();
 }
 
+export async function getHealthData(params?: { start?: string; end?: string }) {
+  const query = new URLSearchParams();
+  if (params?.start) query.set("start", params.start);
+  if (params?.end) query.set("end", params.end);
+  const res = await fetch(`${API_BASE}/health/?${query}`, { headers: await getHeaders() });
+  return res.json();
+}
+
 export async function upsertHealthData(data: object) {
   const res = await fetch(`${API_BASE}/health/`, {
     method: "POST",
