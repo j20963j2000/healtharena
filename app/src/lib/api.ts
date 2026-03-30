@@ -11,13 +11,25 @@ async function getHeaders() {
   };
 }
 
+async function handleResponse(res: Response) {
+  if (!res.ok) {
+    let msg = `伺服器錯誤 (${res.status})`;
+    try {
+      const body = await res.json();
+      if (body?.detail) msg = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail);
+    } catch {}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+
 export async function createArena(data: object) {
   const res = await fetch(`${API_BASE}/arenas/`, {
     method: "POST",
     headers: await getHeaders(),
     body: JSON.stringify(data),
   });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function joinArena(inviteCode: string) {
@@ -25,12 +37,12 @@ export async function joinArena(inviteCode: string) {
     method: "POST",
     headers: await getHeaders(),
   });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function getMyArenas() {
   const res = await fetch(`${API_BASE}/arenas/`, { headers: await getHeaders() });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function getHealthData(params?: { start?: string; end?: string }) {
@@ -38,7 +50,7 @@ export async function getHealthData(params?: { start?: string; end?: string }) {
   if (params?.start) query.set("start", params.start);
   if (params?.end) query.set("end", params.end);
   const res = await fetch(`${API_BASE}/health/?${query}`, { headers: await getHeaders() });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function upsertHealthData(data: object) {
@@ -47,33 +59,33 @@ export async function upsertHealthData(data: object) {
     headers: await getHeaders(),
     body: JSON.stringify(data),
   });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function getArenaReports(arenaId: string) {
   const res = await fetch(`${API_BASE}/reports/${arenaId}`, {
     headers: await getHeaders(),
   });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function getLeaderboard(arenaId: string) {
   const res = await fetch(`${API_BASE}/leaderboard/${arenaId}`, {
     headers: await getHeaders(),
   });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function searchUsers(q: string) {
   const res = await fetch(`${API_BASE}/friends/search?q=${encodeURIComponent(q)}`, {
     headers: await getHeaders(),
   });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function getFriends() {
   const res = await fetch(`${API_BASE}/friends/`, { headers: await getHeaders() });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function sendFriendRequest(addresseeId: string) {
@@ -81,7 +93,7 @@ export async function sendFriendRequest(addresseeId: string) {
     method: "POST",
     headers: await getHeaders(),
   });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function acceptFriendRequest(friendshipId: string) {
@@ -89,7 +101,7 @@ export async function acceptFriendRequest(friendshipId: string) {
     method: "POST",
     headers: await getHeaders(),
   });
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function removeFriend(friendshipId: string) {
@@ -97,5 +109,5 @@ export async function removeFriend(friendshipId: string) {
     method: "DELETE",
     headers: await getHeaders(),
   });
-  return res.json();
+  return handleResponse(res);
 }
