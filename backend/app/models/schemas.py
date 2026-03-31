@@ -63,6 +63,7 @@ class ArenaCreate(BaseModel):
 class ArenaResponse(ArenaCreate):
     id: str
     creator_id: str
+    creator_name: Optional[str] = None
     status: ArenaStatus
     invite_code: str
     created_at: datetime

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "HealthArena",
+    "name": "ArenaX",
     "slug": "healtharena",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,12 +16,12 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.yukhnology.healtharena",
       "infoPlist": {
-        "NSHealthShareUsageDescription": "HealthArena 需要讀取您的健康數據（步數、體重、體脂、飲水量）來參與競技場比拚",
-        "NSHealthUpdateUsageDescription": "HealthArena 需要存取您的健康數據",
-        "NSCameraUsageDescription": "HealthArena 需要相機來拍攝打卡照片",
-        "NSPhotoLibraryUsageDescription": "HealthArena 需要相片庫來上傳打卡照片和頭貼",
+        "NSHealthShareUsageDescription": "ArenaX 需要讀取您的健康數據（步數、體重、體脂、飲水量）來參與競技場比拚",
+        "NSHealthUpdateUsageDescription": "ArenaX 需要存取您的健康數據",
+        "NSCameraUsageDescription": "ArenaX 需要相機來拍攝打卡照片",
+        "NSPhotoLibraryUsageDescription": "ArenaX 需要相片庫來上傳打卡照片和頭貼",
         "ITSAppUsesNonExemptEncryption": false,
-        "NSFaceIDUsageDescription": "HealthArena 使用 Face ID 讓您快速安全地登入"
+        "NSFaceIDUsageDescription": "ArenaX 使用 Face ID 讓您快速安全地登入"
       },
       "entitlements": {
         "com.apple.developer.healthkit": true,

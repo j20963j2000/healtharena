@@ -1,11 +1,42 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { shareArenaInvite } from "../lib/share";
+import { deleteArena } from "../lib/api";
+import { useAuthStore } from "../store/authStore";
 
 export default function ArenaDetailScreen({ route, navigation }: any) {
   const { arena } = route.params;
+  const { user } = useAuthStore();
+  const [deleting, setDeleting] = useState(false);
+
+  const isCreator = user?.id === arena.creator_id;
 
   const shareInviteCode = () => shareArenaInvite(arena.name, arena.invite_code);
+
+  const handleDelete = () => {
+    Alert.alert(
+      "刪除競技場",
+      `確定要刪除「${arena.name}」？\n所有成員資料與戰報都將一併刪除，此操作無法復原。`,
+      [
+        { text: "取消", style: "cancel" },
+        {
+          text: "刪除",
+          style: "destructive",
+          onPress: async () => {
+            setDeleting(true);
+            try {
+              await deleteArena(arena.id);
+              navigation.goBack();
+            } catch (e: any) {
+              Alert.alert("刪除失敗", e.message);
+            } finally {
+              setDeleting(false);
+            }
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -15,6 +46,7 @@ export default function ArenaDetailScreen({ route, navigation }: any) {
       )}
 
       <View style={styles.infoCard}>
+        <Row label="創建者" value={arena.creator_name ?? "—"} />
         <Row label="狀態" value={
           arena.status === "active" ? "🔥 進行中" :
           arena.status === "pending" ? "⏳ 等待開始" : "✅ 已結束"
@@ -57,6 +89,19 @@ export default function ArenaDetailScreen({ route, navigation }: any) {
           <Text style={styles.actionLabel}>打卡牆</Text>
         </TouchableOpacity>
       </View>
+
+      {isCreator && (
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={handleDelete}
+          disabled={deleting}
+        >
+          {deleting
+            ? <ActivityIndicator color="#ef4444" />
+            : <Text style={styles.deleteButtonText}>🗑️ 刪除競技場</Text>
+          }
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -94,4 +139,9 @@ const styles = StyleSheet.create({
   },
   actionIcon: { fontSize: 32, marginBottom: 8 },
   actionLabel: { color: "#94a3b8", fontWeight: "bold" },
+  deleteButton: {
+    marginTop: 24, borderRadius: 12, borderWidth: 1,
+    borderColor: "#ef4444", padding: 14, alignItems: "center",
+  },
+  deleteButtonText: { color: "#ef4444", fontWeight: "bold", fontSize: 15 },
 });

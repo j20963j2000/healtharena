@@ -40,6 +40,9 @@ export default function HomeScreen({ navigation }: any) {
               {item.status === "active" ? "🔥 進行中" :
                item.status === "pending" ? "⏳ 等待開始" : "✅ 已結束"}
             </Text>
+            {item.creator_name && (
+              <Text style={styles.arenaCreator}>👤 {item.creator_name}</Text>
+            )}
             <Text style={styles.arenaDate}>
               {item.start_date} → {item.end_date}
             </Text>
@@ -76,7 +79,8 @@ const styles = StyleSheet.create({
   },
   arenaName: { fontSize: 18, fontWeight: "bold", color: "#f8fafc" },
   arenaStatus: { color: "#94a3b8", marginTop: 4 },
-  arenaDate: { color: "#64748b", fontSize: 12, marginTop: 4 },
+  arenaCreator: { color: "#64748b", fontSize: 12, marginTop: 4 },
+  arenaDate: { color: "#64748b", fontSize: 12, marginTop: 2 },
   empty: { color: "#64748b", textAlign: "center", marginTop: 40, fontSize: 16 },
   fab_container: { flexDirection: "row", gap: 12, marginTop: 8 },
   fab: {

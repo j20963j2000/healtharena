@@ -111,3 +111,12 @@ export async function removeFriend(friendshipId: string) {
   });
   return handleResponse(res);
 }
+
+export async function deleteArena(arenaId: string) {
+  const res = await fetch(`${API_BASE}/arenas/${arenaId}`, {
+    method: "DELETE",
+    headers: await getHeaders(),
+  });
+  if (res.status === 204) return;
+  return handleResponse(res);
+}

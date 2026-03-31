@@ -96,6 +96,8 @@ create policy "Users can create arenas" on arenas for insert
   with check (auth.uid() = creator_id);
 create policy "Creator can update arena" on arenas for update
   using (auth.uid() = creator_id);
+create policy "Creator can delete arena" on arenas for delete
+  using (auth.uid() = creator_id);
 
 -- ============================================================
 -- ARENA MEMBERS
